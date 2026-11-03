@@ -1,0 +1,168 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #fff; color: #222; }
+
+.pantalla {
+  position: fixed; inset: 0;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1.5rem; padding: 2rem; text-align: center;
+}
+.pantalla.activa { display: flex; }
+
+/* Pantallas 1 y 2: planas a propósito */
+.plana h1 { font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 400; }
+.plana button {
+  font: inherit; padding: .6rem 1.4rem; border: 1px solid #999; background: #f3f3f3;
+  border-radius: 4px; cursor: pointer;
+}
+.plana button:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
+#frase-brillo { min-height: 1.6em; font-size: 1.1rem; opacity: 0; transition: opacity .8s; }
+#frase-brillo.visible { opacity: 1; }
+
+/* Parpadeo */
+#parpadeo { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 50; }
+#parpadeo.on { opacity: 1; }
+
+/* Pantalla 3: explosión de color */
+#p3 {
+  background: linear-gradient(135deg, #96DFE5, #F2B9C8, #F2E6B2, #FFA066);
+  background-size: 400% 400%;
+  animation: fluir 8s ease infinite;
+  color: #000; overflow: hidden;
+}
+@keyframes fluir { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+.encendido { animation: encender .9s ease-out both; }
+@keyframes encender { from { filter: brightness(0) saturate(0); transform: scale(1.08); } to { filter: none; transform: none; } }
+
+#p3 h2 {
+  font-family: "Pacifico", cursive; font-weight: 400; line-height: 1.1;
+  font-size: clamp(1.8rem, 7vw, 4rem);
+  text-shadow: 0 4px 0 rgba(0,0,0,.18), 0 0 40px rgba(255,255,255,.6);
+  z-index: 2; animation: latido 1.4s ease-in-out infinite;
+}
+@keyframes latido { 50% { transform: scale(1.06); } }
+#p3 p { font-size: clamp(1.1rem, 4vw, 1.6rem); text-shadow: 0 2px 10px rgba(0,0,0,.35); z-index: 2; max-width: 28ch; }
+
+.flotante { position: absolute; bottom: -10vh; pointer-events: none; user-select: none; z-index: 1; animation: subir linear forwards; }
+@keyframes subir { to { transform: translateY(-120vh) rotate(var(--giro)); opacity: 0; } }
+
+.confeti { position: absolute; top: 50%; left: 50%; width: 10px; height: 14px; z-index: 3; pointer-events: none; animation: explotar 1.6s cubic-bezier(.1,.7,.3,1) forwards; }
+@keyframes explotar { to { transform: translate(var(--x), var(--y)) rotate(720deg); opacity: 0; } }
+
+.btn-continuar {
+  position: relative; z-index: 4; font: inherit; font-size: 1.1rem;
+  padding: .7rem 1.8rem; border: 2px solid #fff; border-radius: 999px;
+  background: rgba(255,255,255,.2); color: #fff; cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity 1s;
+}
+.btn-continuar.visible { opacity: 1; pointer-events: auto; }
+.btn-continuar:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+/* Pantalla 4: la historia */
+#p4 { background: #1b1030; color: #fff; }
+
+/* Los dos textos comparten el mismo lugar */
+.bloque-texto { display: grid; justify-items: center; }
+.bloque-texto > * { grid-area: 1 / 1; }
+
+.h-texto, .h-texto2 { opacity: 0; transition: opacity 1s ease, transform 1s ease; }
+.h-texto { font-size: clamp(1.2rem, 4.5vw, 1.9rem); line-height: 1.5; max-width: 28ch; }
+.h-texto.visible { opacity: 1; }
+.h-texto.sale { opacity: 0; transform: translateY(-30px); }
+
+.h-texto2 {
+  font-family: "Pacifico", cursive;
+  font-size: clamp(1.6rem, 6vw, 2.6rem); line-height: 1.4; max-width: 20ch;
+  text-shadow: 0 0 24px rgba(255,120,180,.6);
+  transform: translateY(40px);
+}
+.h-texto2.visible { opacity: 1; transform: none; }
+.h-texto2.sale { opacity: 0; transform: translateY(-30px); }
+
+/* La fecha */
+.zona { position: relative; width: 100%; height: 6rem; }
+.fecha {
+  position: absolute; inset: 0; margin: auto;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Pacifico", cursive; font-size: clamp(2.6rem, 12vw, 5rem);
+  text-shadow: 0 0 30px rgba(255,120,180,.7);
+  opacity: 0; transform: scale(.7);
+  transition: transform .9s ease, opacity .9s ease;
+}
+.fecha.visible { opacity: 1; transform: none; }
+.fecha.baja { opacity: 0; transform: translateY(120%); }
+
+/* Pantalla 5: la historia de amor */
+#p5 {
+  background:
+    radial-gradient(circle at 20% 20%, #ffd6e8 0%, transparent 55%),
+    radial-gradient(circle at 80% 80%, #ffc2d9 0%, transparent 55%),
+    linear-gradient(160deg, #fff0f5, #ffb3cf);
+  color: #7a1f4b; overflow: hidden;
+}
+.amor { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2.5rem; max-width: 900px; z-index: 2; }
+
+.a-texto {
+  flex: 1 1 280px; max-width: 28ch;
+  font-family: "Pacifico", cursive; font-size: clamp(1.4rem, 4.5vw, 2.2rem); line-height: 1.5;
+  opacity: 0; transform: translateY(20px); transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.a-contador {
+  flex: 0 1 240px; display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  padding: 1.5rem 2rem; border-radius: 28px;
+  background: rgba(255,255,255,.55); box-shadow: 0 10px 40px rgba(194,60,120,.25);
+  opacity: 0; transform: scale(.85); transition: opacity 1s ease, transform 1s ease;
+}
+.a-texto.visible, .a-contador.visible { opacity: 1; transform: none; }
+
+.a-dias { font-size: clamp(3.5rem, 14vw, 5.5rem); font-weight: 700; line-height: 1; }
+.a-etiqueta { font-size: 1.2rem; }
+.a-sub { font-size: .9rem; opacity: .75; }
+.a-fin {
+  font-family: "Pacifico", cursive; font-size: clamp(1.6rem, 6vw, 2.4rem);
+  opacity: 0; transform: scale(.4);
+  transition: opacity .6s ease, transform .7s cubic-bezier(.2,1.6,.4,1);
+}
+.a-fin.visible { opacity: 1; transform: none; }
+
+/* Botón de la pantalla 5 (fondo rosa) */
+.btn-rosa { color: #7a1f4b; border-color: #7a1f4b; background: rgba(255,255,255,.5); }
+.btn-rosa:focus-visible { outline-color: #7a1f4b; }
+
+/* Pantalla 6: la carta */
+#p6 {
+  background: radial-gradient(circle at 50% 30%, #3a1d5c 0%, transparent 70%), #1b1030;
+  color: #fff; overflow: hidden;
+}
+.carta { display: grid; justify-items: center; align-items: center; z-index: 2; }
+.carta > * { grid-area: 1 / 1; }
+.carta-final { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; z-index: 2; }
+
+/* Las dos partes comparten el mismo centro: la parte invisible ya no empuja el texto */
+#p6.activa { display: grid; place-items: center; }
+#p6 > * { grid-area: 1 / 1; max-width: 100%; }
+
+.c-linea {
+  font-family: "Caveat", cursive; font-weight: 500;
+  text-align: center; text-wrap: balance;
+  max-width: min(26ch, 100%); line-height: 1.4; overflow-wrap: anywhere;
+  font-size: clamp(1.5rem, min(6.6vw, 4.8vh), 2.8rem);
+  text-shadow: 0 0 24px rgba(255,120,180,.45);
+  opacity: 0; transform: translateY(24px); filter: blur(4px);
+  transition: opacity 1s ease, transform 1s ease, filter 1s ease;
+}
+.c-linea.visible { opacity: 1; transform: none; filter: none; }
+
+.c-firma {
+  font-family: "Pacifico", cursive; font-size: clamp(1.6rem, 6vw, 2.6rem);
+  color: #ffb3d1; text-shadow: 0 0 30px rgba(255,120,180,.7);
+  opacity: 0; transform: scale(.6);
+  transition: opacity .8s ease, transform .9s cubic-bezier(.2,1.6,.4,1);
+}
+.c-firma.visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  #p3, #p3 h2 { animation: none; }
+  .c-linea { filter: none; }
+}
